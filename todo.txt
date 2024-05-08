@@ -1,0 +1,15 @@
+Make map class track obstacles in a list.
+- collisionChecker -> returns if point is in any obstacle
+- 
+
+Obstacle class (just a rect)
+- make a contains method (check if contains a point)
+
+Graph class
+- generate using map, also use the halton sequence to get points over map
+    any point that fails collision check -> don't include
+  impl rdisc, k nearest to get points to connect with a straight line
+    - check edge - use van der corput sequence up to a certain resolution
+    to verify the edge does not travel through obstacles
+- display function
+- each vertex needs id, coords, neighbors (adj list)
