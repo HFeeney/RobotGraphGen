@@ -11,5 +11,14 @@ Graph class
   impl rdisc, k nearest to get points to connect with a straight line
     - check edge - use van der corput sequence up to a certain resolution
     to verify the edge does not travel through obstacles
-- display function
+- display function FINISH THIS!
 - each vertex needs id, coords, neighbors (adj list)
+
+
+note: when doing k closest, some work is redone since when an edge is drawn the
+vertex isn't added to the other node's neighbors...
+
+drawing isn't quite working... some edges aren't drawn
+
+since the k closest are selected, THEN the distance filter is applied, 
+some nodes that could have k connections end up with fewer
