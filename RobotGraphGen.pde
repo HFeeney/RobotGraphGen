@@ -16,7 +16,12 @@ void setup () {
     map.render(this.g);
     graph.render(this.g);
     save("background.png");
+    // System.out.println(graph.edgeIsValid(new double[]{317, 143}, new double[]{355, 178}, map));
     background = loadImage("background.png");
+}
+
+void mouseMoved() {
+    System.out.println(mouseX + " " + mouseY);
 }
 
 void draw() {
@@ -32,5 +37,4 @@ void draw() {
     noFill();
     circle(mouseX, mouseY, 2f * (float) R);
     // System.out.println(graph.distance(new double[]{(double)mouseX, (double)mouseY}, new double[]{0.0, 0.0}));
-    System.out.println(mouseX + " " + mouseY);
 }

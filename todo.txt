@@ -18,7 +18,11 @@ Graph class
 note: when doing k closest, some work is redone since when an edge is drawn the
 vertex isn't added to the other node's neighbors...
 
-drawing isn't quite working... some edges aren't drawn
-
 since the k closest are selected, THEN the distance filter is applied, 
 some nodes that could have k connections end up with fewer
+
+currently using a simplified drawing method for graph...
+
+going wrong:
+    - edges being drawn through obstacles !!!
+    - nodes within range aren't being connected for nodes with < k neighbors

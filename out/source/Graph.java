@@ -24,10 +24,12 @@ public class Graph {
         this.coordinates = new ArrayList<>();
         this.neighbors = new ArrayList<>();
         buildGraph(map, k, r);
-        System.out.println(this.neighbors);
+
+        // prints out coords of vertices with fewer than k neighbors
         for (int i = 0; i < this.neighbors.size(); i++) {
-            if (this.neighbors.get(i).size() < 3) {
-                for (double d : this.coordinates.get(i)) System.out.print(d +", ");
+            if (this.neighbors.get(i).size() < k) {
+                for (double d : this.coordinates.get(i))
+                    System.out.print(d + ", ");
 
                 System.out.println();
             }
@@ -39,66 +41,102 @@ public class Graph {
     }
 
     public void render(PGraphics g) {
-        // Track which vertices have been visited.
-        Set<Integer> visited = new HashSet<>();
-
-        // Iterate through all the vertices.
         for (int i = 0; i < this.numVertices(); i++) {
-            if (visited.contains(i))
-                continue;
+            // Render vertex
+            double[] currCoords = this.coordinates.get(i);
+            g.stroke(0);
+            g.strokeWeight(5);
+            g.point((float) currCoords[0], (float) currCoords[1]);
 
-            // Do a BFS from this vertex if it hasn't been visited
-            Queue<Integer> toVisit = new LinkedList<>();
-            toVisit.add(i);
-            while (!toVisit.isEmpty()) {
-                // Dequeue a vertex and consider it visited.
-                int currVertex = toVisit.remove();
-                visited.add(currVertex);
-
-                // Render the current vertex
-                double[] currCoords = this.coordinates.get(currVertex);
-                g.stroke(0);
-                g.strokeWeight(5);
-                g.point((float) currCoords[0], (float) currCoords[1]);
-
-                // Iterate through all neighbors of this vertex.
-                for (Integer neighbor : this.neighbors.get(currVertex)) {
-                    // If the neighbor has not been visited, add it to the queue
-                    // and draw the edge between it and this vertex.
-                    if (!visited.contains(neighbor)) {
-                        toVisit.add(neighbor);
-                        // double[] neighborCoords = this.coordinates.get(neighbor);
-
-                        // g.strokeWeight(1);
-                        // g.stroke(90, 200, 255);
-                        // g.line((float) currCoords[0],
-                        //        (float) currCoords[1],
-                        //        (float) neighborCoords[0],
-                        //        (float) neighborCoords[1]);
-                    }
-                    double[] neighborCoords = this.coordinates.get(neighbor);
-
-                    g.strokeWeight(1);
-                    g.stroke(90, 200, 255);
-                    g.line((float) currCoords[0],
-                           (float) currCoords[1],
-                           (float) neighborCoords[0],
-                           (float) neighborCoords[1]);
-                }
+            for (int n : this.neighbors.get(i)) {
+                double[] neighborCoords = this.coordinates.get(n);
+                g.strokeWeight(1);
+                g.stroke(90, 200, 255);
+                g.line((float) currCoords[0],
+                        (float) currCoords[1],
+                        (float) neighborCoords[0],
+                        (float) neighborCoords[1]);
             }
         }
     }
+    // public void render(PGraphics g) {
+    // // Track which vertices have been visited.
+    // Set<Integer> visited = new HashSet<>();
+
+    // // Iterate through all the vertices.
+    // for (int i = 0; i < this.numVertices(); i++) {
+    // if (visited.contains(i))
+    // continue;
+
+    // // Do a BFS from this vertex if it hasn't been visited
+    // Queue<Integer> toVisit = new LinkedList<>();
+    // toVisit.add(i);
+    // while (!toVisit.isEmpty()) {
+    // // Dequeue a vertex and consider it visited.
+    // int currVertex = toVisit.remove();
+    // visited.add(currVertex);
+
+    // // Render the current vertex
+    // double[] currCoords = this.coordinates.get(currVertex);
+    // g.stroke(0);
+    // g.strokeWeight(5);
+    // g.point((float) currCoords[0], (float) currCoords[1]);
+
+    // // Iterate through all neighbors of this vertex.
+    // for (Integer neighbor : this.neighbors.get(currVertex)) {
+    // // If the neighbor has not been visited, add it to the queue
+    // // and draw the edge between it and this vertex.
+    // if (!visited.contains(neighbor)) {
+    // toVisit.add(neighbor);
+    // // double[] neighborCoords = this.coordinates.get(neighbor);
+
+    // // g.strokeWeight(1);
+    // // g.stroke(90, 200, 255);
+    // // g.line((float) currCoords[0],
+    // // (float) currCoords[1],
+    // // (float) neighborCoords[0],
+    // // (float) neighborCoords[1]);
+    // }
+    // double[] neighborCoords = this.coordinates.get(neighbor);
+
+    // g.strokeWeight(1);
+    // g.stroke(90, 200, 255);
+    // g.line((float) currCoords[0],
+    // (float) currCoords[1],
+    // (float) neighborCoords[0],
+    // (float) neighborCoords[1]);
+    // }
+    // }
+    // }
+    // }
 
     /**
-     * 
-     * @param k the maximum number of neighbors to connect each vertex with
-     * @param r the maximum distance between neighbors in pixels
+     * @param map the map to build the graph on top of
+     * @param k   the maximum number of neighbors to connect each vertex with
+     * @param r   the maximum distance between neighbors in pixels
      */
     private void buildGraph(Map map, int k, double r) {
+        // Generate vertices on the map.
+        generateVertices(map);
+
+        // The number of vertices is now known. Initialize the neighbors list
+        // with empty lists.
+        for (int i = 0; i < this.numVertices(); i++) {
+            this.neighbors.add(new ArrayList<>());
+        }
+
+        // Generate edges by connecting each vertex with its neighbors.
+        for (int i = 0; i < this.numVertices(); i++) {
+            // Add all neighbors that can be connected to this vertex.
+            updateNeighbors(i, k, r, map);
+        }
+    }
+
+    private void generateVertices(Map map) {
         // Generate vertices over the map, discarding those that intersect with
         // obstacles.
         HaltonSequence hs = new HaltonSequence(P, Q);
-        for (int i = 0; i < NUM_VERTICES; i++) {
+        while (this.coordinates.size() < NUM_VERTICES) {
             // Gives the position of the next with coordinates as fractions.
             double[] hs_val = hs.next();
 
@@ -112,31 +150,6 @@ public class Graph {
                 this.coordinates.add(point);
             }
         }
-
-        // The number of vertices is now known. Finish initializing the
-        // neighbors list.
-        for (int i = 0; i < this.coordinates.size(); i++) {
-            this.neighbors.add(new ArrayList<>());
-        }
-
-        // Generate edges by connecting each vertex with its neighbors.
-        for (int i = 0; i < coordinates.size(); i++) {
-            double[] currPoint = this.coordinates.get(i); // Current vertex
-
-            // Generate the list of up to k closest neighbors. Remove from
-            // these any neighbors that exceed a distance r from the current
-            // vertex. Additionally, remove any which would form an invalid
-            // edge that runs through obstacles.
-            List<Integer> kClosest = kClosest(i, k, this.coordinates);
-            kClosest.removeIf((el) -> {
-                double[] otherPoint = this.coordinates.get(el);
-                return distance(currPoint, otherPoint) > r
-                        || !edgeIsValid(otherPoint, currPoint, map);
-            });
-
-            // Add all of these edges to this node's neighbors.
-            this.neighbors.get(i).addAll(kClosest);
-        }
     }
 
     /**
@@ -148,7 +161,7 @@ public class Graph {
      * @param map the map the edge will exist in
      * @return whether the edge
      */
-    private boolean edgeIsValid(double[] v1, double[] v2, Map map) {
+    public boolean edgeIsValid(double[] v1, double[] v2, Map map) {
         // Van der Corput sequence will supply values to check between v1, v2.
         VanDerCorput vdc = new VanDerCorput(EDGE_CHECK_BASE);
 
@@ -175,48 +188,61 @@ public class Graph {
     }
 
     /**
-     * Returns a list of point indices that are the k closest to a given point.
+     * Update the neighbors list associated with the provided point such that
+     * it contains the k closest points within a range of the point that aren't
+     * blocked by obstacles.
      * 
-     * @param pointIndex the index of the point within points to compare others to
-     * @param k          the number of close points to return
-     * @param points     the coordinates of each point, where points.get(i) are the
-     *                   coordinates of point i
-     * @return a list of the indices of the k closest points to the point at
-     *         pointIndex in points
-     * @throws IllegalArgumentException if k is greater than points.size() - 1,
-     *                                  or points is empty.
+     * @param currPoint the index of the point within points to compare others to
+     * @param k         the number of close points to return
+     * @param r         the maximum distance away a neighbor can be from the point
+     * @param map       a map of all obstacles within the space
      */
-    private List<Integer> kClosest(
-            int pointIndex,
+    private void updateNeighbors(
+            int currPoint,
             int k,
-            List<double[]> points) {
-        if (points.size() == 0 || k > points.size() - 1) {
-            throw new IllegalArgumentException();
-        }
+            double r,
+            Map map) {
+        // There's no work to do if this point already has k neighbors.
+        if (this.neighbors.get(currPoint).size() == k)
+            return;
 
-        // Add all points except for pointIndex to a priority queue, sorting on
-        // the distance to pointIndex.
-        double[] from = points.get(pointIndex);
-        Queue<Integer> sorted = new PriorityQueue<>(new Comparator<Integer>() {
-            public int compare(Integer p1_idx, Integer p2_idx) {
-                return distance(from, points.get(p1_idx)) < distance(from, points.get(p2_idx)) ? -1 : 1;
-            }
-        });
+        // Create a priority queue, sorting on the distance to pointIndex.
+        double[] currCoords = this.coordinates.get(currPoint);
+        Queue<Integer> sorted = new PriorityQueue<>(
+                (Integer p1_idx, Integer p2_idx) -> {
+                    double d1 = distance(currCoords, coordinates.get(p1_idx));
+                    double d2 = distance(currCoords, coordinates.get(p2_idx));
+                    return d1 < d2 ? -1 : 1;
+                });
 
         // Add each of the points to the priority queue.
-        for (int i = 0; i < points.size(); i++) {
-            if (i == pointIndex) { // Don't add the reference point itself.
+        for (int i = 0; i < this.numVertices(); i++) {
+            if (i == currPoint) { // Don't add the reference point itself.
                 continue;
             }
             sorted.add(i);
         }
 
-        // Add the k closest points to the result.
-        List<Integer> result = new ArrayList<>();
-        for (int i = 0; i < k; i++) {
-            result.add(sorted.remove());
+        // Add the k closest points to this point's neighbors, as long as they
+        // are within range and aren't obscured by an obstacle.
+        List<Integer> currNeighbors = this.neighbors.get(currPoint);
+        while (currNeighbors.size() < k && !sorted.isEmpty()) {
+            int otherPoint = sorted.remove();
+            double[] otherCoords = this.coordinates.get(otherPoint);
+
+            // The loop should stop as soon as no vertices will be in range.
+            if (distance(currCoords, otherCoords) > r)
+                break;
+
+            // As long as the edge is valid
+            // add the nodes to each others' neighbors lists.
+            // TODO: restrict the in-degree of points?
+            List<Integer> otherNeighbors = this.neighbors.get(otherPoint);
+            if (edgeIsValid(currCoords, otherCoords, map)) {
+                currNeighbors.add(otherPoint);
+                otherNeighbors.add(currPoint);
+            }
         }
-        return result;
     }
 
     public double distance(double[] p1, double[] p2) {
