@@ -1,5 +1,6 @@
 /**
- * Credits to: https://en.wikipedia.org/wiki/Van_der_Corput_sequence
+ * Credits to https://en.wikipedia.org/wiki/Van_der_Corput_sequence
+ * for inspiration.
  */
 
 public class VanDerCorput {

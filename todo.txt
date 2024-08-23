@@ -24,5 +24,4 @@ some nodes that could have k connections end up with fewer
 currently using a simplified drawing method for graph...
 
 going wrong:
-    - edges being drawn through obstacles !!!
     - nodes within range aren't being connected for nodes with < k neighbors

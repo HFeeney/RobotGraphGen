@@ -25,6 +25,8 @@ public class Graph {
         this.neighbors = new ArrayList<>();
         buildGraph(map, k, r);
 
+        System.out.println("Graph neighbors: \n" + this.neighbors);
+
         // prints out coords of vertices with fewer than k neighbors
         for (int i = 0; i < this.neighbors.size(); i++) {
             if (this.neighbors.get(i).size() < k) {

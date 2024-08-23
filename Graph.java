@@ -59,56 +59,6 @@ public class Graph {
             }
         }
     }
-    // public void render(PGraphics g) {
-    // // Track which vertices have been visited.
-    // Set<Integer> visited = new HashSet<>();
-
-    // // Iterate through all the vertices.
-    // for (int i = 0; i < this.numVertices(); i++) {
-    // if (visited.contains(i))
-    // continue;
-
-    // // Do a BFS from this vertex if it hasn't been visited
-    // Queue<Integer> toVisit = new LinkedList<>();
-    // toVisit.add(i);
-    // while (!toVisit.isEmpty()) {
-    // // Dequeue a vertex and consider it visited.
-    // int currVertex = toVisit.remove();
-    // visited.add(currVertex);
-
-    // // Render the current vertex
-    // double[] currCoords = this.coordinates.get(currVertex);
-    // g.stroke(0);
-    // g.strokeWeight(5);
-    // g.point((float) currCoords[0], (float) currCoords[1]);
-
-    // // Iterate through all neighbors of this vertex.
-    // for (Integer neighbor : this.neighbors.get(currVertex)) {
-    // // If the neighbor has not been visited, add it to the queue
-    // // and draw the edge between it and this vertex.
-    // if (!visited.contains(neighbor)) {
-    // toVisit.add(neighbor);
-    // // double[] neighborCoords = this.coordinates.get(neighbor);
-
-    // // g.strokeWeight(1);
-    // // g.stroke(90, 200, 255);
-    // // g.line((float) currCoords[0],
-    // // (float) currCoords[1],
-    // // (float) neighborCoords[0],
-    // // (float) neighborCoords[1]);
-    // }
-    // double[] neighborCoords = this.coordinates.get(neighbor);
-
-    // g.strokeWeight(1);
-    // g.stroke(90, 200, 255);
-    // g.line((float) currCoords[0],
-    // (float) currCoords[1],
-    // (float) neighborCoords[0],
-    // (float) neighborCoords[1]);
-    // }
-    // }
-    // }
-    // }
 
     /**
      * @param map the map to build the graph on top of
